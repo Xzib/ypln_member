@@ -1,15 +1,26 @@
-from flask import Flask,render_template,url_for,request
+from flask import Flask,render_template,url_for,request,redirect,session
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, Email, InputRequired, EqualTo
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'mysecretkey'
 
 class LoginForm(FlaskForm):
-    username = StringField("Enter your name")
-    password = StringField("Enter your password")
+    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
+    password = PasswordField("Enter your password",validators=[DataRequired()])
     submit  =  SubmitField("Sign up")
+
+class SignUpForm(FlaskForm):
+    fullname = StringField("Please Enter your full name", validators=[DataRequired()])
+    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
+    username = StringField("Enter a user name",validators=[InputRequired(message="Please enter user name")])
+    password = PasswordField("Enter your password",validators=[InputRequired(), EqualTo("repeat_password",message="password must match")])
+    repeat_password = PasswordField("re-type password",validators=[DataRequired()])
+    signup = SubmitField("Sign up")
+    signin = SubmitField("Sign in")
+
 
 # @app.route("/",methods=['GET','POST'])
 # def index():
@@ -26,7 +37,7 @@ class LoginForm(FlaskForm):
 
 @app.route("/")
 def index():
-    return render_template("signin.html")
+    return "hello"
 
 
 
@@ -37,19 +48,17 @@ def sign_up():
 @app.route("/sign_in",methods=['GET','POST'])
 def sign_in():
     form = LoginForm()
-    username = None
-    password = None
     if form.validate_on_submit():
-        nonlocal username, password
-        username = form.username.data
-        password = form.password.data
-    return render_template("thankyou.html",form,)
+        
+        session['useremail'] = form.useremail.data
+        session['password'] = form.password.data
+        
+        return redirect(url_for("thankyou"))
+    return render_template("signin.html",form=form)
 
-# @app.route("/thankyou")
-# def thankyou():
-#     first = request.args.get("first")
-#     last = request.args.get("last")
-#     return render_template("thankyou.html",first=first, last=last)
+@app.route("/thankyou")
+def thankyou():
+    return render_template("thankyou.html")
 
 # # @app.route('/username/<name>')
 # # def user_latin(name):

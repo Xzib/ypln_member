@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 <div>
-    <p>Thank you for registration {{first}} {{last}}</p>
+    <p>Thank you for registration {{session['useremail']}} {{session['password']}}</p>
 </div>
 {% endblock %}
