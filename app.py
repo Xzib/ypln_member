@@ -1,11 +1,70 @@
 from flask import Flask,render_template,url_for,request,redirect,session
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Email, InputRequired, EqualTo
+from flask_migrate import Migrate
+import os
+basedir  = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+Migrate(app,db)
+##############################################################
+###################### Models ################################
+
+class RegisteredMember(db.Model):
+    __tablename__ = 'user_registration'
+    
+    id = db.Column(db.Integer, primary_key = True)
+    fullname = db.Column(db.Text)
+    useremail = db.Column(db.Text)
+    username = db.Column(db.Text)
+    password = db.Column(db.Text)
+    phone_number = db.Column(db.Integer)
+    user_info = db.relationship('UserInfo', backref='registeredmember', uselist = False)
+
+    def __init__(self,fullname, useremail, username, password, phone_number):
+        self.fullname = fullname
+        self.useremail = useremail
+        self.username = username
+        self.password = password
+        self.phone_number = phone_number
+    
+    def __repr__(self):
+        if self.user_info:
+            return f"your username is \'{self.username}\' and your about me is \'{self.user_info.about_me}\' "
+        return f"your username is \'{self.username}\' your email is \'{self.useremail}\' your about me is not saved "
+    
+        
+
+class UserInfo(db.Model):
+
+    __tablename__ = "user_info"
+    id = db.Column(db.Integer,primary_key=True)
+    about_me = db.Column(db.Text)
+    registered_member_id = db.Column(db.Integer,db.ForeignKey('user_registration.id'))
+
+    def __init__(self,about_me,registered_member_id):
+        self.about_me=about_me
+        self.registered_member_id= registered_member_id
+    
+    def __repr__(self):
+        return f"hi {about_me}"
+
+
+
+
+
+
+
+
 
 class LoginForm(FlaskForm):
     useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
