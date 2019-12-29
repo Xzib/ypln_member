@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Email, InputRequired, EqualTo
 from flask_migrate import Migrate
+from forms import LoginForm, SignUpForm
 import os
 basedir  = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,15 +28,15 @@ class RegisteredMember(db.Model):
     useremail = db.Column(db.Text)
     username = db.Column(db.Text)
     password = db.Column(db.Text)
-    phone_number = db.Column(db.Integer)
+    # phone_number = db.Column(db.Integer)
     user_info = db.relationship('UserInfo', backref='registeredmember', uselist = False)
 
-    def __init__(self,fullname, useremail, username, password, phone_number):
+    def __init__(self,fullname, useremail, username, password):
         self.fullname = fullname
         self.useremail = useremail
         self.username = username
         self.password = password
-        self.phone_number = phone_number
+        # self.phone_number = phone_number
     
     def __repr__(self):
         if self.user_info:
@@ -56,7 +57,7 @@ class UserInfo(db.Model):
         self.registered_member_id= registered_member_id
     
     def __repr__(self):
-        return f"hi {about_me}"
+        return f"hi {self.about_me}"
 
 
 
@@ -65,20 +66,6 @@ class UserInfo(db.Model):
 
 
 
-
-class LoginForm(FlaskForm):
-    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
-    password = PasswordField("Enter your password",validators=[DataRequired()])
-    submit  =  SubmitField("Sign up")
-
-class SignUpForm(FlaskForm):
-    fullname = StringField("Please Enter your full name", validators=[DataRequired()])
-    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
-    username = StringField("Enter a user name",validators=[InputRequired(message="Please enter user name")])
-    password = PasswordField("Enter your password",validators=[InputRequired(), EqualTo("repeat_password",message="password must match")])
-    repeat_password = PasswordField("re-type password",validators=[DataRequired()])
-    signup = SubmitField("Sign up")
-    signin = SubmitField("Sign in")
 
 
 # @app.route("/",methods=['GET','POST'])
@@ -100,19 +87,39 @@ def index():
 
 
 
-@app.route("/sign_up")
+@app.route("/sign_up",methods = ['GET','POST'])
 def sign_up():
-    return render_template("signup.html")
+    form = SignUpForm()
+    if form.validate_on_submit():
+        fullname = form.fullname.data 
+        useremail =  form.useremail.data
+        username  = form.username.data
+        password  = form.password.data
+        member = RegisteredMember(fullname,useremail,username,password)
+        db.session.add(member)
+        db.session.commit()
+        return redirect(url_for('list_register_members'))
+    return render_template('signup.html',form=form)
+@app.route("/list")
+def list_register_members():
+    members = RegisteredMember.query.all()
+    return render_template("thankyou.html", members=members)
 
 @app.route("/sign_in",methods=['GET','POST'])
 def sign_in():
     form = LoginForm()
     if form.validate_on_submit():
+        useremail = form.useremail.data
+        password = form.password.data
+        reg = RegisteredMember.query.filter_by(useremail=useremail).first()
         
-        session['useremail'] = form.useremail.data
-        session['password'] = form.password.data
-        
-        return redirect(url_for("thankyou"))
+        if reg != None:
+            if  reg.password == password: 
+                return redirect(url_for("thankyou"))
+            else:
+                return redirect(url_for('sign_in',message = 'Incorrect Password'))
+        else:
+            return redirect(url_for('sign_in',message = 'Incorrect Email id'))
     return render_template("signin.html",form=form)
 
 @app.route("/thankyou")

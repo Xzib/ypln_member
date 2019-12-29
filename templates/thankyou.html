@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div>
-    <p>Thank you for registration {{session['useremail']}} {{session['password']}}</p>
+    <ul>
+        {% for member in members%}
+            <li>{{member.fullname}}</li>
+        {% endfor %}
+    </ul>
+    
+    <!-- <p>Thank you for registration {{session['useremail']}} {{session['password']}}</p> -->
     <a href="{{url_for('index')}}"><p>goto home page</p></a>
 </div>
 {% endblock %}
