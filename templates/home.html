@@ -1,22 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <p>
-    {% if username %}
-    Welcome {{username}} your password is {{password}}
+    {% if not (session.useremail == null) %}
+        <p>Welcome {{session.useremail}} your password is {{session.password}}</p>
     {% else %}
-    please enter your credentials
+        <a href="{{url_for('sign_in')}}"><input type="submit" value="Sign in"/></a>
     {% endif %}
 </p>
-<p>
-    <form method="POST">
-        {{form.hidden_tag()}}
-        <div>{{form.username.label}} {{form.username()}}</div>
-        <div>{{form.password.label}} {{form.password()}}</div>
 
-        {{form.submit()}}
-
-    </form>
-</p>
 
 
 {% endblock %}

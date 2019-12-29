@@ -2,5 +2,6 @@
 {% block content %}
 <div>
     <p>Thank you for registration {{session['useremail']}} {{session['password']}}</p>
+    <a href="{{url_for('index')}}"><p>goto home page</p></a>
 </div>
 {% endblock %}

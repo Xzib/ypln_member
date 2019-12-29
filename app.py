@@ -37,7 +37,7 @@ class SignUpForm(FlaskForm):
 
 @app.route("/")
 def index():
-    return "hello"
+    return render_template('home.html')
 
 
 
