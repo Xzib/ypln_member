@@ -4,8 +4,8 @@
     {% if not (session.useremail == null) %}
         <p>Welcome {{session.useremail}} your password is {{session.password}}</p>
     {% else %}
-        <a href="{{url_for('sign_in')}}"><input type="submit" value="Sign in"/></a>
-        <a href="{{url_for('sign_up')}}"><input type="submit" value="Sign up"/></a>
+        <a href="{{url_for('member_login.sign_in')}}"><input type="submit" value="Sign in"/></a>
+        <a href="{{url_for('member_login.sign_up')}}"><input type="submit" value="Sign up"/></a>
     {% endif %}
 </p>
 
