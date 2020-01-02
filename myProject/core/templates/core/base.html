@@ -12,12 +12,24 @@
   </head>
   <body>
       <!--navbar-->
+
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{url_for('index')}}">Home</a>
+        <a class="navbar-brand" href="{{url_for('core.index')}}">Home</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        {% if current_user.is_authenticated %}
+        <a class="navbar-brand" href="{{url_for('member_login.logout')}}">Logout</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        {% else %}
+        <a class="navbar-brand" href="{{url_for('member_login.sign_in')}}"><input type="submit" value="Sign in"/></a>
+        <a class="navbar-brand" href="{{url_for('member_login.sign_up')}}"><input type="submit" value="Sign up"/></a>
+        {% endif %}
+        
       </nav>
+      
     {% block content %}
     {% endblock %}    
     <!-- Optional JavaScript -->
