@@ -45,7 +45,7 @@ def sign_in():
             flash('logged in Successfully')
             next = request.args.get('next')
             if (next == None) or (not next[0] == "/"):
-                next = url_for('member_profile.thankyou')
+                next = url_for('core.index')
             return redirect(next)
     return render_template("signin.html",form=form)
 
