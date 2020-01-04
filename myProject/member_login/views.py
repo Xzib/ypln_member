@@ -19,9 +19,11 @@ def sign_up():
         member = RegisteredMember(fullname=form.fullname.data,
                                     useremail=form.useremail.data,
                                     username=form.username.data,
-                                    password=form.password.data)
+                                    password=form.password.data,
+                                    confirmed=False)
         db.session.add(member)
         db.session.commit()
+
         flash("Thank you for Registration")
 
         return redirect(url_for('member_login.sign_in'))
@@ -55,4 +57,7 @@ def logout():
     logout_user()
     flash("you are logged out")
     return redirect(url_for('core.index'))
+
+
+
 
