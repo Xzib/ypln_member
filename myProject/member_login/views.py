@@ -4,6 +4,9 @@ from myProject.models import RegisteredMember
 from myProject.member_login.forms import LoginForm, SignUpForm
 from flask import render_template,redirect,request,url_for,flash,abort
 from flask_login import login_user, login_required,logout_user
+from myProject.member_login.token import genrate_token, confirm_token
+from myProject.member_login.email import send_email
+from datetime import datetime
 
 
 member_login_bp =  Blueprint('member_login',__name__,
@@ -23,20 +26,23 @@ def sign_up():
                                     confirmed=False)
         db.session.add(member)
         db.session.commit()
-
-        flash("Thank you for Registration")
-
-        return redirect(url_for('member_login.sign_in'))
+        token = genrate_token(member.useremail)
+        confirm_url = url_for('.confirm_email', token = token, _external= True)
+        html = render_template('confirm_url.html', confirm_url = confirm_url) 
+        subject = "Confirm your email"
+        send_email(member.useremail,subject,html)
+        login_user(member)
+        flash("Thank you for Registration, A confirmation email has been sent to you!", "success")
+        return redirect(url_for('core.index'))
     return render_template('signup.html',form=form)
 
 '''
-Blue print for sign in form
+Sign in View
 '''
 
 @member_login_bp.route("/sign_in",methods=['GET','POST'])
-
 def sign_in():
-    form = LoginForm()
+    form = LoginForm()  
     if form.validate_on_submit():
         useremail = form.useremail.data
         password = form.password.data
@@ -47,9 +53,33 @@ def sign_in():
             flash('logged in Successfully')
             next = request.args.get('next')
             if (next == None) or (not next[0] == "/"):
-                next = url_for('core.index')
+                next = url_for('member_profile.thankyou')
             return redirect(next)
     return render_template("signin.html",form=form)
+
+
+'''
+confirm_email view
+
+'''
+@member_login_bp.route('/confirm/<token>')  
+@login_required
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+    except:
+        flash('The confirmation link is invalid or has expired','danger')
+    user = RegisteredMember.query.filter_by(useremail=email).first_or_404()
+    if user.confirmed:
+        flash('Account already confirmed, please login', 'success')
+    else:
+        user.confirmed = True
+        user.confirmed_on = datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        flash('You have confirmed your account', 'success')
+    return redirect(url_for('core.index'))
+
 
 @member_login_bp.route('/logout')
 @login_required

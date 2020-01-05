@@ -35,7 +35,7 @@ class RegisteredMember(db.Model,UserMixin):
         self.password = generate_password_hash(password)
         # self.email = email
         # self.password = bcrypt.generate_password_hash(password)
-        self.registered_on = datetime.datetime.now()
+        self.registered_on = datetime.now()
         self.admin = admin
         self.confirmed = confirmed
         self.confirmed_on = confirmed_on

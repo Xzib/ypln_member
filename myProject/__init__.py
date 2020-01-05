@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from flask_mal import Mail
+from flask_mail import Mail
 
 
 mail = Mail()
@@ -19,21 +19,26 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'data.
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #### Email Configuration #####
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_SERVER'] = 'yplnetwork.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_TLS'] = True 
+app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_DEBUG'] = True
-app.config['MAIL_USERNAME'] = os.environ['EMAIL_USER']
-app.config['MAIL_PASSWORD'] = os.environ['EMAIL_PASSWORD']
-app.config['DEFAULT_MAIL_SENDER'] = 'zohaib@example.com' 
+app.config['MAIL_USERNAME'] = 'test@yplnetwork.com'
+app.config['MAIL_PASSWORD'] = '1234@1234'
+app.config['DEFAULT_MAIL_SENDER'] = None
+
+
+#### Confirmation Token #####
+app.config['SECRET_PASSWORD_SALT'] = 'its_my_salt'
+
 
 
 db = SQLAlchemy(app)
 Migrate(app,db)
 
 login_manager.init_app(app)
-login_manager.login_view = 'sign_in'
+login_manager.login_view = 'member_login.sign_in'
 
 mail.init_app(app)
 
