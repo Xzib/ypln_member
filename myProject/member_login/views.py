@@ -3,9 +3,10 @@ from myProject import db
 from myProject.models import RegisteredMember
 from myProject.member_login.forms import LoginForm, SignUpForm
 from flask import render_template,redirect,request,url_for,flash,abort
-from flask_login import login_user, login_required,logout_user
+from flask_login import login_user, login_required,logout_user, current_user
 from myProject.member_login.token import genrate_token, confirm_token
 from myProject.member_login.email import send_email
+from myProject.member_login.decorators import check_confirmed
 from datetime import datetime
 
 
@@ -33,7 +34,7 @@ def sign_up():
         send_email(member.useremail,subject,html)
         login_user(member)
         flash("Thank you for Registration, A confirmation email has been sent to you!", "success")
-        return redirect(url_for('core.index'))
+        return redirect(url_for('.unconfirmed'))
     return render_template('signup.html',form=form)
 
 '''
@@ -53,7 +54,7 @@ def sign_in():
             flash('logged in Successfully')
             next = request.args.get('next')
             if (next == None) or (not next[0] == "/"):
-                next = url_for('member_profile.thankyou')
+                next = url_for('.profile')
             return redirect(next)
     return render_template("signin.html",form=form)
 
@@ -78,8 +79,45 @@ def confirm_email(token):
         db.session.add(user)
         db.session.commit()
         flash('You have confirmed your account', 'success')
-    return redirect(url_for('core.index'))
+    return redirect(url_for('.profile'))
 
+'''
+Unconfirmed route
+
+'''
+
+@member_login_bp.route('/unconfirmed')
+
+def unconfirmed():
+    if current_user.confirmed:
+        return redirect(url_for('core.index'))
+    flash('Please confirm your account!', 'warning')
+    return render_template('unconfirmed.html')
+
+
+'''
+profile view
+'''
+@member_login_bp.route('/profile', methods=['GET','POST'])
+@login_required
+@check_confirmed
+def profile():
+    return render_template('dashboard.html')
+
+
+'''
+Resend email 
+'''
+@member_login_bp.route('/resend')
+@login_required
+def resend_confirmation():
+    token = genrate_token(current_user.useremail)
+    confirm_url = url_for('.confirm_email', token = token, _external = True)
+    html = render_template('confirm_url.html', confirm_url= confirm_url)
+    subject = 'Please confirm your email'
+    send_email(current_user.useremail,subject,html)
+    flash('A new confirmation email has been sent to you!', 'success')
+    return redirect(url_for('.unconfirmed'))
 
 @member_login_bp.route('/logout')
 @login_required

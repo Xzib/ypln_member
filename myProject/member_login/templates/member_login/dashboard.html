@@ -1,14 +1,10 @@
-{% extends "base.html" %}
-{% block content %}
 
 <div class="jumbotron">
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated and current_user.confirmed %}
         Welcome {{current_user.username}}
-    {% else %}
-    Please Login or Register
+    {% elif current_user.is_authenticated %}
+    <a href="{{ url_for('member_login.unconfirmed') }}">Confirm</a>
     {% endif %}
 
 </div>
 
-
-{% endblock %}
