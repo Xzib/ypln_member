@@ -119,6 +119,11 @@ def resend_confirmation():
     flash('A new confirmation email has been sent to you!', 'success')
     return redirect(url_for('.unconfirmed'))
 
+@member_login_bp.route('/user_profile')
+def user_profile():
+    return render_template('user_profile.html')
+
+
 @member_login_bp.route('/logout')
 @login_required
 def logout():
