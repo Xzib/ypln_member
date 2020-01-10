@@ -26,6 +26,7 @@ class SignUpForm(FlaskForm):
         if RegisteredMember.query.filter_by(username=field.data).first():
             ValidationError("Your user name has been taken")
 class ProfileForm(FlaskForm):
+    useremail = StringField("Enter your Username", validators=[DataRequired()])
     username = StringField("Enter your Username", validators=[DataRequired()])
     first_name = StringField("Enter your First Name", validators=[DataRequired()])
     last_name = StringField("Enter your Last Name", validators=[DataRequired()])
@@ -39,4 +40,8 @@ class ProfileForm(FlaskForm):
     def check_username(self,field):
         if RegisteredMember.query.filter_by(username=field.data).first():
             ValidationError("Your user name has been taken")
+    
+    def check_email(self, field):
+        if RegisteredMember.query.filter_by(useremail=field.data).first():
+            ValidationError("Your email has been already registered")
 
