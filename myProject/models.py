@@ -24,11 +24,21 @@ class RegisteredMember(db.Model,UserMixin):
     confirmed_on = db.Column(db.DateTime, nullable=True)
     fullname = db.Column(db.Text)
     username = db.Column(db.Text)
+    profile_pic = db.Column(db.String(20),nullable=False, default= 'default_profile.png')
+    first_name = db.Column(db.String, nullable=True)
+    last_name = db.Column(db.String, nullable=True)
+    address = db.Column(db.String, nullable=True)
+    city = db.Column(db.String, nullable=True)
+    country = db.Column(db.String, nullable=True)
+    postal_code = db.Column(db.String, nullable=True)
+    about_me = db.Column(db.Text, nullable=True)
     # phone_number = db.Column(db.Integer)
     user_info = db.relationship('UserInfo', backref='registeredmember', uselist = False)
 
     def __init__(self,fullname, useremail, username, password,
-                confirmed,confirmed_on=None,admin=False):
+                confirmed,confirmed_on=None,admin=False,first_name=None,
+                last_name=None, address = None, city = None, country= None, postal_code= None,
+                about_me= None):
         self.fullname = fullname
         self.useremail = useremail
         self.username = username
@@ -39,6 +49,15 @@ class RegisteredMember(db.Model,UserMixin):
         self.admin = admin
         self.confirmed = confirmed
         self.confirmed_on = confirmed_on
+
+        self.first_name= first_name
+        self.last_name= last_name 
+        self.address = address  
+        self.city = city  
+        self.country= country  
+        self.postal_code= postal_code 
+        self.about_me= about_me 
+
         # self.phone_number = phone_number
     
     def check_password(self, password):

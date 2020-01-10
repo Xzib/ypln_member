@@ -1,8 +1,8 @@
-"""addded confirmation requirement
+"""added user profile section
 
-Revision ID: 31839c50c354
+Revision ID: c22a00f74ebb
 Revises: 
-Create Date: 2020-01-05 12:53:00.234859
+Create Date: 2020-01-10 16:35:32.186542
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '31839c50c354'
+revision = 'c22a00f74ebb'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,14 @@ def upgrade():
     sa.Column('confirmed_on', sa.DateTime(), nullable=True),
     sa.Column('fullname', sa.Text(), nullable=True),
     sa.Column('username', sa.Text(), nullable=True),
+    sa.Column('profile_pic', sa.String(length=20), nullable=False),
+    sa.Column('first_name', sa.String(), nullable=True),
+    sa.Column('last_name', sa.String(), nullable=True),
+    sa.Column('address', sa.String(), nullable=True),
+    sa.Column('city', sa.String(), nullable=True),
+    sa.Column('country', sa.String(), nullable=True),
+    sa.Column('postal_code', sa.String(), nullable=True),
+    sa.Column('about_me', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('useremail')
     )

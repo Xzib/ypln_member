@@ -1,12 +1,13 @@
 from flask import Blueprint,render_template,redirect,url_for
 from myProject import db
 from myProject.models import RegisteredMember
-from myProject.member_login.forms import LoginForm, SignUpForm
+from myProject.member_login.forms import LoginForm, SignUpForm, ProfileForm
 from flask import render_template,redirect,request,url_for,flash,abort
 from flask_login import login_user, login_required,logout_user, current_user
 from myProject.member_login.token import genrate_token, confirm_token
 from myProject.member_login.email import send_email
 from myProject.member_login.decorators import check_confirmed
+from myProject.member_login.picture_handler import add_profile_pic
 from datetime import datetime
 
 
@@ -96,7 +97,7 @@ def unconfirmed():
 
 
 '''
-profile view
+dashboard
 '''
 @member_login_bp.route('/profile', methods=['GET','POST'])
 @login_required
@@ -119,9 +120,44 @@ def resend_confirmation():
     flash('A new confirmation email has been sent to you!', 'success')
     return redirect(url_for('.unconfirmed'))
 
+'''
+Profile view
+'''
+
+
 @member_login_bp.route('/user_profile')
 def user_profile():
-    return render_template('user_profile.html')
+    form = ProfileForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            username = current_user.username
+            pic = add_profile_pic(form.picture.data,username)
+            current_user.profile_pic = pic
+        current_user.username = form.username.data
+        current_user.useremail = form.useremail.data
+        current_user.first_name = form.first_name.data
+        form.last_name.data= form.last_name.data
+        current_user.address = form.address.data
+        current_user.city = form.city.data
+        current_user.country = form.country.data
+        current_user.postal_code = form.postal_code.data
+        current_user.about_me = form.about_me.data
+
+        db.session.commit()
+        flash('User account updated')
+        return redirect(url_for('.uesr_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.useremail.data = current_user.useremail
+        form.first_name.data = current_user.first_name
+        form.last_name.data = form.last_name.data
+        form.address.data = current_user.address
+        form.city.data = current_user.city
+        form.country.data = current_user.country
+        form.postal_code.data = current_user.postal_code
+        form.about_me.data = current_user.about_me
+    profile_image = url_for('static' , filename = 'profile_pics/'+current_user.profile_pic)
+    return render_template('user_profile.html', profile_image = profile_image , form = form)
 
 
 @member_login_bp.route('/logout')
