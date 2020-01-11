@@ -9,7 +9,7 @@
                         <h4 class="card-title">Edit Profile</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
                             {{ form.hidden_tag() }}
                             <div class="row">
                                 <div class="col-md-5 pr-1">
@@ -105,7 +105,7 @@
                     <div class="card-body">
                         <div class="author">
                             <a href="#">
-                                <img class="avatar border-gray" src="../assets/img/faces/face-3.jpg" alt="...">
+                                <img class="avatar border-gray" src="{{url_for('static', filename = 'dashboard/assets/img/faces/face-3.jpg')}}" alt="...">
                                 <h5 class="title">Mike Andrew</h5>
                             </a>
                             <p class="description">     

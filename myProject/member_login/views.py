@@ -142,10 +142,9 @@ def user_profile():
         current_user.country = form.country.data
         current_user.postal_code = form.postal_code.data
         current_user.about_me = form.about_me.data
-
         db.session.commit()
         flash('User account updated')
-        return redirect(url_for('.uesr_profile'))
+        return redirect(url_for('.user_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.useremail.data = current_user.useremail
