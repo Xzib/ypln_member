@@ -125,7 +125,7 @@ Profile view
 '''
 
 
-@member_login_bp.route('/user_profile')
+@member_login_bp.route('/user_profile', methods=['GET','POST'])
 def user_profile():
     form = ProfileForm()
     if form.validate_on_submit():
