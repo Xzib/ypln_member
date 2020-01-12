@@ -1,6 +1,6 @@
 from flask import Blueprint,render_template,redirect,url_for
 from myProject import db
-from myProject.models import RegisteredMember
+from myProject.models import RegisteredMember, BlogPost
 from myProject.member_login.forms import LoginForm, SignUpForm, ProfileForm
 from flask import render_template,redirect,request,url_for,flash,abort
 from flask_login import login_user, login_required,logout_user, current_user
@@ -157,6 +157,18 @@ def user_profile():
         form.about_me.data = current_user.about_me
     profile_image = url_for('static' , filename = 'profile_pics/'+current_user.profile_pic)
     return render_template('user_profile.html', profile_image = profile_image , form = form)
+
+'''
+Blog post
+'''
+
+@member_login_bp.route("/<username>")
+def users_posts(username):
+    page = request.args.get('page',1,type=int)
+    user = RegisteredMember.query.filter_by(uesrname=username).first_or_404()
+    blogposts = BlogPost.query.filter_by(author=user).order_by(BlogPost.date.desc()).paginate(page=page,per_page=5)
+    return render_template('dashboard.html',blogposts = blogposts, user=user)
+
 
 
 @member_login_bp.route('/logout')

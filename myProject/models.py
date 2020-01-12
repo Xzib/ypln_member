@@ -34,6 +34,7 @@ class RegisteredMember(db.Model,UserMixin):
     about_me = db.Column(db.Text, nullable=True)
     # phone_number = db.Column(db.Integer)
     user_info = db.relationship('UserInfo', backref='registeredmember', uselist = False)
+    posts = db.relationship('BlogPost', backref='author', lazy = True)
 
     def __init__(self,fullname, useremail, username, password,
                 confirmed,confirmed_on=None,admin=False,first_name=None,
@@ -68,6 +69,32 @@ class RegisteredMember(db.Model,UserMixin):
     #     return f"your username is \'{self.username}\' your email is \'{self.useremail}\' your about me is not saved "
     
         
+
+class BlogPost(db.Model):
+    users = db.relationship(RegisteredMember)
+    id = db.Column(db.Integer, primary_key=True )
+    user_id = db.Column(db.Integer,db.ForeignKey('user_registration.id'),nullable=False)
+    date = db.Column(db.DateTime,nullable=False, default=datetime.utcnow)
+    title = db.Column(db.String(140),nullable=False)
+    text = db.Column(db.Text,nullable=False)
+
+    def __init__(self,title,text,user_id):
+        self.title = title
+        self.text = text
+        self.user_id= user_id
+
+    def __repr__(self):
+        return f"Post ID: {self.id} -- Date: {self.date} --- Title: {self.title}"
+
+
+
+
+
+
+
+
+
+
 
 class UserInfo(db.Model):
 
