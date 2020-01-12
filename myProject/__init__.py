@@ -47,8 +47,10 @@ from myProject.member_login.views import member_login_bp
 from myProject.member_profiles.views import member_profiles_bp
 from myProject.core.views import core_bp
 from myProject.admin.views import admin_bp
+from myProject.errors.handlers import error_bp
 
 app.register_blueprint(core_bp)
 app.register_blueprint(member_login_bp,url_prefix='/member_login')
 app.register_blueprint(member_profiles_bp,url_prefix='/member_profile')
 app.register_blueprint(admin_bp)
+app.register_blueprint(error_bp)
