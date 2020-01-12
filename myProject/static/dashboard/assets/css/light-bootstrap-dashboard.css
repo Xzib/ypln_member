@@ -240,6 +240,7 @@ input:focus {
     outline: 0 !important;
 }
 
+
 /*           Animations              */
 
 .form-control,
@@ -283,7 +284,7 @@ input:focus {
 .wrapper {
     position: relative;
     top: 0;
-    height: 100vh;
+    height: 100%;
 }
 
 .page-header .page-header-image {
@@ -698,6 +699,7 @@ body>.navbar-collapse[data-color="purple"]:after {
 .main-panel>.content {
     padding: 30px 15px;
     min-height: calc(100% - 123px);
+    
 }
 
 .main-panel>.footer {
