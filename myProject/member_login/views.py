@@ -103,7 +103,9 @@ dashboard
 @login_required
 @check_confirmed
 def profile():
-    return render_template('dashboard.html')
+    page = request.args.get('page',1,type=int)
+    blogposts = BlogPost.query.order_by(BlogPost.date.desc()).paginate(page=page,per_page=5)
+    return render_template('dashboard.html',blogposts=blogposts)
 
 
 '''
@@ -125,7 +127,7 @@ Profile view
 '''
 
 
-@member_login_bp.route('/user_profile', methods=['GET','POST'])
+@member_login_bp.route('/user_profile', methods = ['GET','POST'])
 def user_profile():
     form = ProfileForm()
     if form.validate_on_submit():
@@ -142,9 +144,10 @@ def user_profile():
         current_user.country = form.country.data
         current_user.postal_code = form.postal_code.data
         current_user.about_me = form.about_me.data
+
         db.session.commit()
         flash('User account updated')
-        return redirect(url_for('.user_profile'))
+        return redirect(url_for('.uesr_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.useremail.data = current_user.useremail
@@ -158,6 +161,9 @@ def user_profile():
     profile_image = url_for('static' , filename = 'profile_pics/'+current_user.profile_pic)
     return render_template('user_profile.html', profile_image = profile_image , form = form)
 
+
+
+
 '''
 Blog post
 '''
@@ -165,10 +171,9 @@ Blog post
 @member_login_bp.route("/<username>")
 def users_posts(username):
     page = request.args.get('page',1,type=int)
-    user = RegisteredMember.query.filter_by(uesrname=username).first_or_404()
+    user = RegisteredMember.query.filter_by(username=username).first_or_404()
     blogposts = BlogPost.query.filter_by(author=user).order_by(BlogPost.date.desc()).paginate(page=page,per_page=5)
-    return render_template('dashboard.html',blogposts = blogposts, user=user)
-
+    return render_template('user_blogs.html',blogposts = blogposts, user=user)
 
 
 @member_login_bp.route('/logout')

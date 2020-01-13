@@ -39,8 +39,8 @@ def update(blog_post_id):
         abort(403)
     form = BlogPostForm()
     if form.validate_on_submit():
-        post.title = form.title.data,
-        post.text = form.text.data,
+        post.title = form.title.data
+        post.text = form.text.data
         db.session.commit()
         flash('Blog post successfully updated')
         return redirect(url_for('.blog_post',blog_post_id=blog_post_id))
@@ -60,7 +60,7 @@ def delete(blog_post_id):
     db.session.delete(post)
     db.session.commit()
     flash("Blog Post deleted")
-    return redirect(url_for('member_login.dashboard'))
+    return redirect(url_for('member_login.profile'))
 
 
 # @member_profiles_bp.route('/list')
