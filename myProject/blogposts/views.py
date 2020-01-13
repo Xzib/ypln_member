@@ -11,7 +11,7 @@ blog_post_bp = Blueprint('blog_post_bp',__name__,
                                 template_folder='templates/blogposts')
 
 
-@blog_post_bp.route('/create')
+@blog_post_bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def create_post():
     form = BlogPostForm()
@@ -38,7 +38,7 @@ def update(blog_post_id):
     if post.author != current_user:
         abort(403)
     form = BlogPostForm()
-    if form.validate_on_submit:
+    if form.validate_on_submit():
         post.title = form.title.data,
         post.text = form.text.data,
         db.session.commit()
