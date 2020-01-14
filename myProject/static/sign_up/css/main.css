@@ -475,9 +475,16 @@ iframe {
   }
 }
 
-#error-message {
+.error-message {
   display: none;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  color : red; 
+  padding: 2%;
+  text-align: center;
 }
+
+
 
 
 

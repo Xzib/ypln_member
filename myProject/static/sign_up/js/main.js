@@ -88,11 +88,16 @@
 //  (jQuery);
 
 function error_test(message){
+    
     if (message.innerHTML != ""){
         message.style.display="block";
-        message.style.color = "red"
+        message.style.background="";
+        
     }
+    // else{
+    //     message.style.display="block";
+    // }
     
 }
-let message = document.getElementById('error-message');
+let message = document.getElementById('error-display');
 error_test(message);

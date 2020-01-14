@@ -8,8 +8,8 @@ from flask_login import current_user
 
 
 class LoginForm(FlaskForm):
-    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")],)
-    password = PasswordField("Enter your password",validators=[DataRequired()])
+    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Invalid email id")],)
+    password = PasswordField("Enter your password",validators=[DataRequired(message="Please enter your password")])
  
 
 class SignUpForm(FlaskForm):
