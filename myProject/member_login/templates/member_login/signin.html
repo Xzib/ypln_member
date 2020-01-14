@@ -36,33 +36,49 @@
 				<span class="login100-form-title p-b-41">
 					Account Login
 				</span>
+				{% if not submission %}
+					<div id="error-message"  >
+						{{ message }}
+					</div>
+				{% endif %}
 				<form class="login100-form validate-form p-b-33 p-t-5" method="POST">
 					{{ form.hidden_tag() }}
 					<div class="wrap-input100 validate-input" data-validate = "Enter username">
 						{{form.useremail(class_='input100')}}
+						
+	
+						
 						<!-- <input class="input100" type="text" name="username" placeholder="User name"> -->
-						{% if message == 'Incorrect Email id' %}
-						<p>{{message}}</p>
-						{% endif %}
 						<span class="focus-input100" data-placeholder="&#xe82a;"></span>
 					</div>
  
 					<div class="wrap-input100 validate-input" data-validate="Enter password">
 						{{form.password(class_='input100')}}
 						<!-- <input class="input100" type="password" name="pass" placeholder="Password"> -->
-						{% if message == 'Incorrect Password' %}
-						<p>{{message}}</p>
-						{% endif %}
+					
 						<span class="focus-input100" data-placeholder="&#xe80f;"></span>
 					</div>
-
+	
 					<div class="container-login100-form-btn m-t-32">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" id='signin'>
 							Login
 						</button>
 					</div>
-
 				</form>
+				
+				
+
+				
+				<!-- {% if message != '' %} -->
+				
+				<!-- {% endif %} -->
+				<!-- {% with messages = get_flashed_messages(with_categories=True) %}
+					{% for message in messages %}
+						{% if message == 'Something went wrong, Please check your email id or password'%}
+					
+				  	{% endif %}
+				  {% endfor %}
+				{% endwith %}</p> -->
 			</div>
 		</div>
 	</div>
@@ -86,6 +102,7 @@
 	<script src="{{url_for('static',filename='sign_up/vendor/countdowntime/countdowntime.js')}}"></script>
 <!--===============================================================================================-->
 	<script src="{{url_for('static', filename='sign_up/js/main.js')}}"></script>
+	
 
 </body>
 </html>

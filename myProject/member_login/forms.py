@@ -8,7 +8,7 @@ from flask_login import current_user
 
 
 class LoginForm(FlaskForm):
-    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")])
+    useremail = StringField("Enter your email", validators=[DataRequired(message="Please enter your email"),Email(message="Please enter a valid email-id")],)
     password = PasswordField("Enter your password",validators=[DataRequired()])
  
 

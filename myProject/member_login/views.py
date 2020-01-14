@@ -44,20 +44,31 @@ Sign in View
 
 @member_login_bp.route("/sign_in",methods=['GET','POST'])
 def sign_in():
-    form = LoginForm()  
+    form = LoginForm()
+    submission = False 
+    message = ''
+
     if form.validate_on_submit():
         useremail = form.useremail.data
         password = form.password.data
         reg = RegisteredMember.query.filter_by(useremail=useremail).first()
-        
-        if  reg.check_password(password) and reg is not None: 
-            login_user(reg)
-            flash('logged in Successfully')
-            next = request.args.get('next')
-            if (next == None) or (not next[0] == "/"):
-                next = url_for('.profile')
-            return redirect(next)
-    return render_template("signin.html",form=form)
+        if reg is not None:
+            if  reg.check_password(password): 
+                login_user(reg)
+                submission = True
+                message = 'Log In successfull'
+                # next = request.args.get('next')
+                # if (next == None) or (not next[0] == "/"):
+                #     next = url_for('.profile')
+                return redirect(url_for('.profile'))
+            elif reg.password != password:
+                message = 'Incorrect password'
+        elif reg is None:
+                message = 'Incorrect email id'
+    elif request.method == 'GET':
+        form.useremail.data = request.args.get('useremail')
+        form.password.data = request.args.get('password')
+    return render_template("signin.html",form=form , message = message, submission=submission)
 
 
 '''
